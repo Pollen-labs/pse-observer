@@ -1,4 +1,5 @@
-import { ProjectList } from "@/components/ProjectList";
+// import { ProjectList } from "@/components/ProjectList";
+import Link from "next/link";
 
 export default async function Home() {
   try {
@@ -14,6 +15,25 @@ export default async function Home() {
           query {
             projects_by_collection(where: {collection_name: {_eq: "Octant (Epoch 1)"}}) {
               project_name
+              project_id
+            }
+            code_metrics_by_collection(where: {collection_name: {_eq: "Octant (Epoch 1)"}}) {
+              avg_active_devs_6_months
+              avg_fulltime_devs_6_months
+              commits_6_months
+              contributors
+              contributors_6_months
+              first_commit_date
+              forks
+              issues_closed_6_months
+              issues_opened_6_months
+              last_commit_date
+              new_contributors_6_months
+              pull_requests_merged_6_months
+              pull_requests_opened_6_months
+              repositories
+              source
+              stars
             }
           }
         `
@@ -31,14 +51,33 @@ export default async function Home() {
       return;
     }
 
-    const data = jsonResponse.data.projects_by_collection
-    const projectNames = data.map((project: { project_name: string }) => project.project_name);
+    const projects = jsonResponse.data.projects_by_collection
+    const metrics = jsonResponse.data.code_metrics_by_collection[0]
+
+    //TODO: get project ids, map names for directory list, ids for params
+    const projectNames = projects.map((project: { project_name: string }) => project.project_name);
     return (
       <main className="flex min-h-screen flex-col items-center justify-between p-24">
         <header className="relative z-[-1] flex place-items-center before:absolute before:h-[300px] before:w-full before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-full after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 sm:before:w-[480px] sm:after:w-[240px] before:lg:h-[360px]">
           <h1 className="text-5xl">OSO for PSE</h1>
         </header>
-        <ProjectList projects={projectNames}/>
+        <section className="flex gap-32 pt-20">
+          <div className="flex-col">
+            <h2 className="text-3xl font-semibold">Project Directory</h2>
+            {projectNames.map((projectName: string) => 
+              <Link href={`/project/${projectName}`} key={projectName}>
+                <li>{projectName}</li>
+              </Link>
+            )}
+          </div>
+          <div>
+            <h2 className="text-3xl font-semibold">Ecosystem Metrics</h2>
+            {Object.entries(metrics).map(([key, value]: [string, any]) => 
+              <div key={key}>{`${key}: ${value}`}</div>
+            )}
+          </div>
+        </section>
+        {/* <ProjectList projects={projectNames}/> */}
       </main>
     );
   } catch (error) {

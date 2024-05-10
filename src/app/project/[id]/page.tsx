@@ -1,8 +1,11 @@
+import Link from "next/link";
+
 interface ProjectDetailsProps {
-  project: string;
+  params: { id: string };
 }
 
-export default async function ProjectDetails({ project }: ProjectDetailsProps ) {
+export default async function ProjectDetails({ params }: ProjectDetailsProps ) {
+  const { id } = params;
   try {
     const response = await fetch('https://opensource-observer.hasura.app/v1/graphql', {
       method: 'POST',
@@ -58,7 +61,7 @@ export default async function ProjectDetails({ project }: ProjectDetailsProps ) 
           }
         `,
         variables: {
-          projectName: project
+          projectName: id
         }
       })
     });
@@ -80,6 +83,7 @@ export default async function ProjectDetails({ project }: ProjectDetailsProps ) 
 
     return (
       <div>
+        <Link href='/'>back to directory</Link>
         {Object.entries(codeMetrics).map(([key, value]: [string, any]) => 
           <div key={key}>{`${key}: ${value}`}</div>
         )}
@@ -93,4 +97,3 @@ export default async function ProjectDetails({ project }: ProjectDetailsProps ) 
     console.error('Fetch error:', error)
   }
 }
-
