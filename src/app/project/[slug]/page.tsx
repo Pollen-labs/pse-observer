@@ -1,11 +1,21 @@
+// 'use client'
 import Link from "next/link";
 
+// import { useParams } from 'next/navigation';
+
+// export default function ProjectDetails() {
+//   const params = useParams()
+
+//   console.log("Params received:", params);
+// }
+
 interface ProjectDetailsProps {
-  params: { id: string };
+  params: { slug: string };
 }
 
 export default async function ProjectDetails({ params }: ProjectDetailsProps ) {
-  const { id } = params;
+  const { slug } = params;
+  // console.log(id)
   try {
     const response = await fetch('https://opensource-observer.hasura.app/v1/graphql', {
       method: 'POST',
@@ -16,8 +26,8 @@ export default async function ProjectDetails({ params }: ProjectDetailsProps ) {
       },
       body: JSON.stringify({
         query: `
-          query getProjectDetails($projectName: String!) {
-            code_metrics_by_project(where: {project_name: {_eq: $projectName}}) {
+          query getProjectDetails($projectSlug: String!) {
+            code_metrics_by_project(where: {project_slug: {_eq: $projectSlug}}) {
               avg_active_devs_6_months
               avg_fulltime_devs_6_months
               commits_6_months
@@ -38,7 +48,7 @@ export default async function ProjectDetails({ params }: ProjectDetailsProps ) {
               repository_source
               stars
             }
-            onchain_metrics_by_project(where: {project_name: {_eq: $projectName}}) {
+            onchain_metrics_by_project(where: {project_slug: {_eq: $projectSlug}}) {
               active_users
               first_txn_date
               high_frequency_users
@@ -61,7 +71,7 @@ export default async function ProjectDetails({ params }: ProjectDetailsProps ) {
           }
         `,
         variables: {
-          projectName: id
+          projectSlug: slug
         }
       })
     });
