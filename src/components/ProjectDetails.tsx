@@ -77,84 +77,22 @@ export default async function ProjectDetails({ project }: ProjectDetailsProps ) 
     }
 
     const data = jsonResponse.data
-    // console.log('fetched data:', data)
     const codeMetrics = data.code_metrics_by_project[0]
     const onchainMetrics = data.onchain_metrics_by_project[0]
-      return (
-        <div>
-          {Object.entries(codeMetrics).map(([key, value]: [string, any]) => 
-            <div key={key}>{`${key}: ${value}`}</div>
-          )}
-        </div>
-      )
-    // return (
-    //   <div>
-    //       <h2 className="text-2xl pt-10 pb-5 underline">Details</h2>
-    //       <div className="text-xl font-bold">{display_name}</div>
-    //       <p>description:</p>
-    //       <li className="pl-5">{description || "no description listed"}</li>
-    //       <p>websites:</p>
-    //       {websites ?
-    //         websites.map((site) => <li key={site.url} className="pl-5">{site.url}</li>)
-    //         : <li className="pl-5">no websites listed</li>
-    //       }
-    //       <p>github:</p>
-    //       {github ?
-    //         github.map((repo) => <li key={repo.url} className="pl-5">{repo.url}</li>)
-    //         : <li className="pl-5">no github listed</li>
-    //       }
-    //       <div>npm:</div>
-    //       {npm ?
-    //         npm.map((repo) => <li key={repo.url} className="pl-5">{repo.url}</li>)
-    //         : <li className="pl-5">no packages listed</li>
-    //       }
-    //       <div>blockchain:</div>
-    //       {blockchain?.map((address) => 
-    //         <div key={address.address} className="pl-5 pb-3">
-    //           <li>address: {address.address}</li>
-    //           <p className="pl-5">- networks: {address.networks[0]}, {address.networks[1]}</p>
-    //           <p className="pl-5">- tags: {address.tags[0]}, {address.tags[1]}</p>
-    //         </div>
-    //       )}
-    //     </div>
-    // )
+
+    return (
+      <div>
+        {Object.entries(codeMetrics).map(([key, value]: [string, any]) => 
+          <div key={key}>{`${key}: ${value}`}</div>
+        )}
+        {Object.entries(onchainMetrics).map(([key, value]: [string, any]) => 
+          <div key={key}>{`${key}: ${value}`}</div>
+        )}
+      </div>
+    )
+    
   } catch (error) {
     console.error('Fetch error:', error)
   }
 }
-// export default function ProjectDetails(project: string) {
-// 	// name, display_name, description, websites, github, npm, blockchain
-
-//   return (
-//     <div>
-//         <h2 className="text-2xl pt-10 pb-5 underline">Details</h2>
-//         <div className="text-xl font-bold">{display_name}</div>
-//         <p>description:</p>
-//         <li className="pl-5">{description || "no description listed"}</li>
-//         <p>websites:</p>
-//         {websites ?
-//           websites.map((site) => <li key={site.url} className="pl-5">{site.url}</li>)
-//           : <li className="pl-5">no websites listed</li>
-//         }
-//         <p>github:</p>
-//         {github ?
-//           github.map((repo) => <li key={repo.url} className="pl-5">{repo.url}</li>)
-//           : <li className="pl-5">no github listed</li>
-//         }
-//         <div>npm:</div>
-//         {npm ?
-//           npm.map((repo) => <li key={repo.url} className="pl-5">{repo.url}</li>)
-//           : <li className="pl-5">no packages listed</li>
-//         }
-//         <div>blockchain:</div>
-//         {blockchain?.map((address) => 
-//           <div key={address.address} className="pl-5 pb-3">
-//             <li>address: {address.address}</li>
-//             <p className="pl-5">- networks: {address.networks[0]}, {address.networks[1]}</p>
-//             <p className="pl-5">- tags: {address.tags[0]}, {address.tags[1]}</p>
-//           </div>
-//         )}
-//       </div>
-//   )
-// }
 
