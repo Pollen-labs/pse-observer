@@ -1,11 +1,13 @@
 import Link from "next/link";
 import { ArrowLeft } from 'lucide-react';
+import CodeMetrics from "@/components/CodeMetrics";
+import NetworkList from "@/components/NetworkList";
 
 interface ProjectDetailsProps {
   params: { slug: string };
 }
 
-interface CodeMetrics {
+export interface CodeMetricsData {
 avg_active_devs_6_months: number;
 avg_fulltime_devs_6_months: number;
 commits_6_months: number;
@@ -27,7 +29,7 @@ repository_source: string;
 stars: number;
 }
 
-interface OnchainMetrics {
+export interface OnchainMetrics {
 active_users: number;
 first_txn_date: Date;
 high_frequency_users: number;
@@ -122,45 +124,8 @@ export default async function ProjectDetails({ params }: ProjectDetailsProps ) {
     }
 
     const data = jsonResponse.data
-    const {
-      project_name,
-      repository_source,
-      repositories,
-      forks,
-      stars,
-      contributors,
-      contributors_6_months,
-      new_contributors_6_months,
-      avg_active_devs_6_months,
-      avg_fulltime_devs_6_months,
-      first_commit_date,
-      last_commit_date,
-      commits_6_months,
-      issues_opened_6_months,
-      issues_closed_6_months,
-      pull_requests_opened_6_months,
-      pull_requests_merged_6_months,
-    } = data.code_metrics_by_project[0];
-
-    const {
-      active_users,
-      first_txn_date,
-      high_frequency_users,
-      l2_gas_6_months,
-      less_active_users,
-      more_active_users,
-      multi_project_users,
-      network,
-      new_user_count,
-      num_contracts,
-      total_l2_gas,
-      total_txns,
-      total_users,
-      txns_6_months,
-      users_6_months,
-    } = data.onchain_metrics_by_project[0]
-    // const codeMetrics = data.code_metrics_by_project[0] as CodeMetrics
-    // const onchainMetrics = data.onchain_metrics_by_project[0] as OnchainMetrics
+    const codeMetrics: CodeMetricsData = data.code_metrics_by_project[0]
+    const onchainMetrics: OnchainMetrics[] = data.onchain_metrics_by_project
 
     return (
       <main className="p-10">
@@ -169,57 +134,16 @@ export default async function ProjectDetails({ params }: ProjectDetailsProps ) {
             <ArrowLeft />
             <p>back to directory</p>
           </Link>
-          <h1 className="text-5xl text-center">{project_name}</h1>
+          <h1 className="text-5xl text-center">{codeMetrics.project_name}</h1>
         </header>
         <section className="flex justify-center gap-36 pt-16">
           <div className="flex-col items-center justify-center">
             <h2 className="text-2xl underline pb-8">CODE METRICS</h2>
-            {/* {Object.entries(codeMetrics).map(([key, value]: [string, any]) => 
-              <div key={key}>{`${key}: ${value}`}</div>
-            )} */}
-            <li>Repository:</li>
-              <p className="pl-5">- source:  {repository_source}</p>
-              <p className="pl-5">- number of repos:  {repositories}</p>
-              <p className="pl-5">- forks:  {forks}</p>
-              <p className="pl-5">- stars:  {stars}</p>
-            <li>Contributors:</li>
-              <p className="pl-5">- total:  {contributors}</p>
-              <p className="pl-5">- last 6 months:  {contributors_6_months}</p>
-              <p className="pl-5">- new in last 6 months:  {new_contributors_6_months}</p>
-              <p className="pl-5">- avg. active devs last 6 months:  {Math.floor(avg_active_devs_6_months)}</p>
-              <p className="pl-5">- avg. full-time devs last 6 months:  {Math.floor(avg_fulltime_devs_6_months)}</p>
-            <li>Activiy:</li>
-              <p className="pl-5">- first commit:  {new Date(first_commit_date).toISOString().split('T')[0]}</p>
-              <p className="pl-5">- last commit:  {new Date(last_commit_date).toISOString().split('T')[0]}</p>
-              <p className="pl-5">- commits in last 6 months:  {commits_6_months}</p>
-              <p className="pl-5">- issues opened in last 6 months:  {issues_opened_6_months}</p>
-              <p className="pl-5">- issues closed in last 6 months:  {issues_closed_6_months}</p>
-              <p className="pl-5">- PRs opened in last 6 months:  {pull_requests_opened_6_months}</p>
-              <p className="pl-5">- PRs merged in last 6 months:  {pull_requests_merged_6_months}</p>
+            <CodeMetrics {...codeMetrics} />
           </div>
-          <div className="flex-col items-center">
+          <div className="flex-col items-center justify-center">
             <h2 className="text-2xl underline pb-8">ON-CHAIN METRICS</h2>
-            {/* {Object.entries(onchainMetrics).map(([key, value]: [string, any]) => 
-              <div key={key}>{`${key}: ${value}`}</div>
-            )} */}
-            <li>Network:</li>
-              <p className="pl-5">- name: {network}</p>
-              <p className="pl-5">- number of contracts: {num_contracts}</p>
-            <li>Users:</li>
-              <p className="pl-5">- total: {total_users}</p>
-              <p className="pl-5">- active: {active_users}</p>
-              <p className="pl-5">- new: {new_user_count}</p>
-              <p className="pl-5">- last 6 months: {users_6_months}</p>
-              <p className="pl-5">- less active: {less_active_users}</p>
-              <p className="pl-5">- more active: {more_active_users}</p>
-              <p className="pl-5">- high frequency: {high_frequency_users}</p>
-              <p className="pl-5">- multi-project: {multi_project_users}</p>
-            <li>Transactions:</li>
-              <p className="pl-5">- first txn date: {first_txn_date}</p>
-              <p className="pl-5">- total txns: {total_txns}</p>
-              <p className="pl-5">- txns in last 6 months: {txns_6_months}</p>
-              <p className="pl-5">- total l2 gas: {total_l2_gas}</p>
-              <p className="pl-5">- l2 gas in last 6 months: {l2_gas_6_months}</p>
+            <NetworkList onchainMetrics={onchainMetrics}/>
           </div>
         </section>
       </main>
