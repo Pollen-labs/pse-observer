@@ -1,4 +1,4 @@
-import { CodeMetricsData } from "@/app/project/[slug]/page";
+import { CodeMetricsData } from "@/types";
 
 export const CodeMetrics: React.FC<CodeMetricsData> = ({
   repository_source,

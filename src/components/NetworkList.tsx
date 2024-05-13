@@ -1,5 +1,5 @@
 'use client'
-import { OnchainMetrics } from "@/app/project/[slug]/page";
+import { OnchainMetrics } from "@/types";
 import { useState } from "react";
 
 interface NetworkListProps {
