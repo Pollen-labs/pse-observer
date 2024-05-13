@@ -1,13 +1,4 @@
-// 'use client'
 import Link from "next/link";
-
-// import { useParams } from 'next/navigation';
-
-// export default function ProjectDetails() {
-//   const params = useParams()
-
-//   console.log("Params received:", params);
-// }
 
 interface ProjectDetailsProps {
   params: { slug: string };
@@ -15,7 +6,6 @@ interface ProjectDetailsProps {
 
 export default async function ProjectDetails({ params }: ProjectDetailsProps ) {
   const { slug } = params;
-  // console.log(id)
   try {
     const response = await fetch('https://opensource-observer.hasura.app/v1/graphql', {
       method: 'POST',
