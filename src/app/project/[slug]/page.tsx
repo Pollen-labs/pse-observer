@@ -10,7 +10,7 @@ export default async function ProjectDetails({ params }: ProjectDetailsProps ) {
     const response = await fetch('https://opensource-observer.hasura.app/v1/graphql', {
       method: 'POST',
       headers: {
-        Authorization: `Bearer ${process.env.DEVELOPER_API_KEY}`,
+        Authorization: `Bearer ${process.env.OSO_API_KEY}`,
         'Content-Type': 'application/json',
         'Accept': 'application/json',
       },
