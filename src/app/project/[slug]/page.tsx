@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ArrowLeft } from 'lucide-react';
 
 interface ProjectDetailsProps {
   params: { slug: string };
@@ -82,15 +83,29 @@ export default async function ProjectDetails({ params }: ProjectDetailsProps ) {
     const onchainMetrics = data.onchain_metrics_by_project[0]
 
     return (
-      <div>
-        <Link href='/'>back to directory</Link>
-        {Object.entries(codeMetrics).map(([key, value]: [string, any]) => 
-          <div key={key}>{`${key}: ${value}`}</div>
-        )}
-        {Object.entries(onchainMetrics).map(([key, value]: [string, any]) => 
-          <div key={key}>{`${key}: ${value}`}</div>
-        )}
-      </div>
+      <main className="p-10">
+        <header>
+          <Link href='/' className="flex gap-2">
+            <ArrowLeft />
+            <p>back to directory</p>
+          </Link>
+          <h1 className="text-5xl text-center">{codeMetrics.project_name}</h1>
+        </header>
+        <section className="flex justify-center gap-10 pt-16">
+          <div className="flex-col items-center">
+            <h2 className="text-2xl underline text-center pb-8">CODE METRICS</h2>
+            {Object.entries(codeMetrics).map(([key, value]: [string, any]) => 
+              <div key={key}>{`${key}: ${value}`}</div>
+            )}
+          </div>
+          <div className="flex-col items-center">
+            <h2 className="text-2xl underline text-center pb-8">ON-CHAIN METRICS</h2>
+            {Object.entries(onchainMetrics).map(([key, value]: [string, any]) => 
+              <div key={key}>{`${key}: ${value}`}</div>
+            )}
+          </div>
+        </section>
+      </main>
     )
 
   } catch (error) {

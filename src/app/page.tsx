@@ -70,7 +70,7 @@ export default async function Home() {
             <h2 className="text-3xl font-semibold">Project Directory</h2>
             {projects.map((project: Project) => 
               <Link href={`/project/${project.project_slug}`} key={project.project_name}>
-                <li>{project.project_name}</li>
+                <li className="hover:underline">{project.project_name}</li>
               </Link>
             )}
           </div>
