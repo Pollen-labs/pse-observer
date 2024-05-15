@@ -8,6 +8,8 @@ interface Project {
   project_name: string;
 }
 
+const collection = 'Gitcoin Grants (Allo)'
+
 export default async function Home() {
   try {
     const response = await fetch('https://opensource-observer.hasura.app/v1/graphql', {
@@ -19,12 +21,12 @@ export default async function Home() {
       },
       body: JSON.stringify({
         query: `
-          query {
-            projects_by_collection(where: {collection_name: {_eq: "Octant (Epoch 1)"}}) {
+          query ggetCollectionDetails($collectionName: String!) {
+            projects_by_collection(where: {collection_name: {_eq: $collectionName}}) {
               project_name
               project_slug
             }
-            code_metrics_by_collection(where: {collection_name: {_eq: "Octant (Epoch 1)"}}) {
+            code_metrics_by_collection(where: {collection_name: {_eq: $collectionName}}) {
               avg_active_devs_6_months
               avg_fulltime_devs_6_months
               commits_6_months
@@ -42,7 +44,7 @@ export default async function Home() {
               source
               stars
             }
-            onchain_metrics_by_collection(where: {collection_name: {_eq: "Octant (Epoch 1)"}}) {
+            onchain_metrics_by_collection(where: {collection_name: {_eq: $collectionName}}) {
               active_users
               collection_id
               collection_name
@@ -63,7 +65,10 @@ export default async function Home() {
               users_6_months
             }
           }
-        `
+        `,
+        variables: {
+          collectionName: collection
+        }
       })
     });
 
@@ -83,17 +88,17 @@ export default async function Home() {
     const onchainMetrics: OnchainMetrics[] = data.onchain_metrics_by_collection
 
     return (
-      <main className="p-24">
+      <main className="p-16">
         <header className="flex flex-col gap-2 items-center">
-          <h1 className="text-5xl font-semibold text-center">Octant Epoch 1</h1>
+          <h1 className="text-5xl font-semibold text-center">{collection}</h1>
           <p className="text-xl text-center">Ecosystem Insights from Open Source Observer</p>
         </header>
         <section className="flex gap-36 justify-center pt-16">
-          <div>
+          <div className="">
             <h2 className="text-2xl underline pb-8">PROJECT DIRECTORY</h2>
             {projects.map((project: Project) => 
               <Link href={`/project/${project.project_slug}`} key={project.project_name}>
-                <li className="hover:underline">{project.project_name}</li>
+                <li className="max-w-72 truncate hover:underline">{project.project_name}</li>
               </Link>
             )}
           </div>
