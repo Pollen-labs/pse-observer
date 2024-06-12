@@ -1,14 +1,14 @@
 import Link from "next/link";
-import { CodeMetricsData, OnchainMetrics } from "@/types";
-import CodeMetrics from "@/components/CodeMetrics";
-import NetworkList from "@/components/NetworkList";
+// import { CodeMetricsData, OnchainMetrics } from "@/types";
+// import CodeMetrics from "@/components/CodeMetrics";
+// import NetworkList from "@/components/NetworkList";
 
 interface Project {
-  project_slug: string;
+  project_id: string;
   project_name: string;
 }
 
-const collection = 'Gitcoin Grants (Allo)'
+const collection = 'octant-01'
 
 export default async function Home() {
   try {
@@ -21,48 +21,10 @@ export default async function Home() {
       },
       body: JSON.stringify({
         query: `
-          query ggetCollectionDetails($collectionName: String!) {
-            projects_by_collection(where: {collection_name: {_eq: $collectionName}}) {
+          query getCollectionDetails($collectionName: String!) {
+            projects_by_collection_v1(where: {collection_name: {_eq: $collectionName}}) {
               project_name
-              project_slug
-            }
-            code_metrics_by_collection(where: {collection_name: {_eq: $collectionName}}) {
-              avg_active_devs_6_months
-              avg_fulltime_devs_6_months
-              commits_6_months
-              contributors
-              contributors_6_months
-              first_commit_date
-              forks
-              issues_closed_6_months
-              issues_opened_6_months
-              last_commit_date
-              new_contributors_6_months
-              pull_requests_merged_6_months
-              pull_requests_opened_6_months
-              repositories
-              source
-              stars
-            }
-            onchain_metrics_by_collection(where: {collection_name: {_eq: $collectionName}}) {
-              active_users
-              collection_id
-              collection_name
-              first_txn_date
-              high_frequency_users
-              l2_gas_6_months
-              less_active_users
-              more_active_users
-              multi_project_users
-              network
-              new_users
-              num_contracts
-              total_l2_gas
-              total_projects
-              total_txns
-              total_users
-              txns_6_months
-              users_6_months
+              project_id
             }
           }
         `,
@@ -83,9 +45,9 @@ export default async function Home() {
       return;
     }
     const data = jsonResponse.data
-    const projects = data.projects_by_collection
-    const codeMetrics: CodeMetricsData = data.code_metrics_by_collection[0]
-    const onchainMetrics: OnchainMetrics[] = data.onchain_metrics_by_collection
+    const projects = data.projects_by_collection_v1
+    // const codeMetrics: CodeMetricsData = data.code_metrics_by_collection[0]
+    // const onchainMetrics: OnchainMetrics[] = data.onchain_metrics_by_collection
 
     return (
       <main className="p-16">
@@ -97,19 +59,19 @@ export default async function Home() {
           <div className="">
             <h2 className="text-2xl underline pb-8">PROJECT DIRECTORY</h2>
             {projects.map((project: Project) => 
-              <Link href={`/project/${project.project_slug}`} key={project.project_name}>
+              <Link href={`/project/${project.project_name}`} key={project.project_name}>
                 <li className="max-w-72 truncate hover:underline">{project.project_name}</li>
               </Link>
             )}
           </div>
-          <div>
+          {/* <div>
             <h2 className="text-2xl underline pb-8">CODE METRICS</h2>
             <CodeMetrics {...codeMetrics} />
           </div>
           <div>
             <h2 className="text-2xl underline pb-8">ON-CHAIN METRICS</h2>
             <NetworkList onchainMetrics={onchainMetrics}/>
-          </div>
+          </div> */}
         </section>
       </main>
     );

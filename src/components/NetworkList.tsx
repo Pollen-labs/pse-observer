@@ -1,56 +1,60 @@
 'use client'
-import { OnchainMetrics } from "@/types";
+import { OnchainMetricsData } from "@/types";
 import { useState } from "react";
 
 interface NetworkListProps {
-  onchainMetrics: OnchainMetrics[];
+  onchainMetrics: OnchainMetricsData[];
 }
 
-export const NetworkMetrics: React.FC<OnchainMetrics> = ({
-  active_users,
-  first_txn_date,
-  high_frequency_users,
-  l2_gas_6_months,
-  less_active_users,
-  more_active_users,
-  multi_project_users,
-  network,
-  new_user_count,
-  num_contracts,
-  total_l2_gas,
-  total_txns,
-  total_users,
-  txns_6_months,
-  users_6_months,
+export const NetworkMetrics: React.FC<OnchainMetricsData> = ({
+  active_contract_count_90_days,
+  address_count,
+  address_count_90_days,
+  days_since_first_transaction,
+  // display_name,
+  event_source,
+  gas_fees_sum,
+  gas_fees_sum_6_months,
+  high_activity_address_count_90_days,
+  low_activity_address_count_90_days,
+  medium_activity_address_count_90_days,
+  multi_project_address_count_90_days,
+  new_address_count_90_days,
+  // project_id,
+  // project_name,
+  // project_namespace,
+  // project_source,
+  returning_address_count_90_days,
+  transaction_count,
+  transaction_count_6_months,
  }) => {
   return (
     <div>
-      <li>Network:</li>
-        <p className="pl-5">- {network}</p>
-        <p className="pl-5">- number of contracts: {num_contracts}</p>
-      <li>Users:</li>
-        <p className="pl-5">- total: {total_users}</p>
-        <p className="pl-5">- active: {active_users}</p>
-        <p className="pl-5">- new: {new_user_count}</p>
-        <p className="pl-5">- last 6 months: {users_6_months}</p>
-        <p className="pl-5">- less active: {less_active_users}</p>
-        <p className="pl-5">- more active: {more_active_users}</p>
-        <p className="pl-5">- high frequency: {high_frequency_users}</p>
-        <p className="pl-5">- multi-project: {multi_project_users}</p>
+      <li>Event source: {event_source}</li>
+      <li>Number of contracts: {active_contract_count_90_days}</li>
+      <li>Addresses:</li>
+        <p className="pl-5">- total: {address_count}</p>
+        <p className="pl-5">- total last 90 days: {address_count_90_days}</p>
+        <p className="pl-5">- new (90 days): {new_address_count_90_days}</p>
+        <p className="pl-5">- returning (90 days): {returning_address_count_90_days}</p>
+        <p className="pl-5">- low activity (90 days): {low_activity_address_count_90_days}</p>
+        <p className="pl-5">- medium activity (90 days): {medium_activity_address_count_90_days}</p>
+        <p className="pl-5">- high activity (90 days): {high_activity_address_count_90_days}</p>
+        <p className="pl-5">- multi-project (90 days): {multi_project_address_count_90_days}</p>
       <li>Transactions:</li>
-        <p className="pl-5">- first txn date: {new Date(first_txn_date).toISOString().split('T')[0]}</p>
-        <p className="pl-5">- total txns: {total_txns}</p>
-        <p className="pl-5">- txns in last 6 months: {txns_6_months}</p>
-        <p className="pl-5">- total L2 gas: {total_l2_gas}</p>
-        <p className="pl-5">- L2 gas in last 6 months: {l2_gas_6_months}</p>
+        <p className="pl-5">- days since first txn: {days_since_first_transaction}</p>
+        <p className="pl-5">- total txns: {transaction_count}</p>
+        <p className="pl-5">- txns in last 6 months: {transaction_count_6_months}</p>
+        <p className="pl-5">- total gas fees: {gas_fees_sum}</p>
+        <p className="pl-5">- gas fees in last 6 months: {gas_fees_sum_6_months}</p>
     </div>
   )
 }
 
 export const NetworkList: React.FC<NetworkListProps> = ({ onchainMetrics }) => {
-  const networks = onchainMetrics.map((project: OnchainMetrics) => project.network)
+  const networks = onchainMetrics.map((project: OnchainMetricsData) => project.event_source)
   const [selectedNetwork, setSelectedNetwork] = useState(networks[0])
-  const networkMetrics = onchainMetrics.filter((metrics: OnchainMetrics) => metrics.network === selectedNetwork)[0]
+  const networkMetrics = onchainMetrics.filter((metrics: OnchainMetricsData) => metrics.event_source === selectedNetwork)[0]
 
   return (
     <section>

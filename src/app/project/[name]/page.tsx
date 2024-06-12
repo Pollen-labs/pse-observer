@@ -1,15 +1,15 @@
 import Link from "next/link";
 import { ArrowLeft } from 'lucide-react';
-import { CodeMetricsData, OnchainMetrics } from "@/types";
+import { CodeMetricsData, OnchainMetricsData } from "@/types";
 import CodeMetrics from "@/components/CodeMetrics";
 import NetworkList from "@/components/NetworkList";
 
 interface ProjectDetailsProps {
-  params: { slug: string };
+  params: { name: string };
 }
 
 export default async function ProjectDetails({ params }: ProjectDetailsProps ) {
-  const { slug } = params;
+  const { name } = params;
   try {
     const response = await fetch('https://opensource-observer.hasura.app/v1/graphql', {
       method: 'POST',
@@ -20,52 +20,55 @@ export default async function ProjectDetails({ params }: ProjectDetailsProps ) {
       },
       body: JSON.stringify({
         query: `
-          query getProjectDetails($projectSlug: String!) {
-            code_metrics_by_project(where: {project_slug: {_eq: $projectSlug}}) {
-              avg_active_devs_6_months
-              avg_fulltime_devs_6_months
-              commits_6_months
-              contributors
-              contributors_6_months
+          query getProjectDetails($projectName: String!) {
+            code_metrics_by_project_v1(where: {project_name: {_eq: $projectName}}) { 
+              closed_issue_count_6_months
+              commit_count_6_months
+              contributor_count
+              contributor_count_6_months
+              display_name
+              event_source
               first_commit_date
-              forks
-              issues_closed_6_months
-              issues_opened_6_months
+              fork_count
+              fulltime_developer_average_6_months
               last_commit_date
-              new_contributors_6_months
+              merged_pull_request_count_6_months
+              new_contributor_count_6_months
+              opened_issue_count_6_months
+              opened_pull_request_count_6_months
               project_id
               project_name
-              project_slug
-              pull_requests_merged_6_months
-              pull_requests_opened_6_months
-              repositories
-              repository_source
-              stars
+              project_namespace
+              project_source
+              repository_count
+              star_count
             }
-            onchain_metrics_by_project(where: {project_slug: {_eq: $projectSlug}}) {
-              active_users
-              first_txn_date
-              high_frequency_users
-              l2_gas_6_months
-              less_active_users
-              more_active_users
-              multi_project_users
-              network
-              new_user_count
-              num_contracts
+            onchain_metrics_by_project_v1(where: {project_name: {_eq: $projectName}}) {
+              active_contract_count_90_days
+              address_count
+              address_count_90_days
+              days_since_first_transaction
+              display_name
+              event_source
+              gas_fees_sum
+              gas_fees_sum_6_months
+              high_activity_address_count_90_days
+              low_activity_address_count_90_days
+              medium_activity_address_count_90_days
+              multi_project_address_count_90_days
+              new_address_count_90_days
               project_id
               project_name
-              project_slug
-              total_l2_gas
-              total_txns
-              total_users
-              txns_6_months
-              users_6_months
+              project_namespace
+              project_source
+              returning_address_count_90_days
+              transaction_count
+              transaction_count_6_months
             }
           }
         `,
         variables: {
-          projectSlug: slug
+          projectName: name
         }
       })
     });
@@ -82,8 +85,8 @@ export default async function ProjectDetails({ params }: ProjectDetailsProps ) {
     }
 
     const data = jsonResponse.data
-    const codeMetrics: CodeMetricsData = data.code_metrics_by_project[0]
-    const onchainMetrics: OnchainMetrics[] = data.onchain_metrics_by_project
+    const codeMetrics: CodeMetricsData = data.code_metrics_by_project_v1[0]
+    const onchainMetrics: OnchainMetricsData[] = data.onchain_metrics_by_project_v1
 
     return (
       <main className="p-10">
@@ -92,7 +95,7 @@ export default async function ProjectDetails({ params }: ProjectDetailsProps ) {
             <ArrowLeft />
             <p>back to directory</p>
           </Link>
-          <h1 className="text-5xl text-center">{codeMetrics.project_name}</h1>
+          <h1 className="text-5xl text-center">{codeMetrics.display_name || codeMetrics.project_name}</h1>
         </header>
         <section className="flex justify-center gap-36 pt-16">
           <div className="flex-col items-center justify-center">

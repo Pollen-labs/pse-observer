@@ -1,42 +1,45 @@
 export interface CodeMetricsData {
-  avg_active_devs_6_months: number;
-  avg_fulltime_devs_6_months: number;
-  commits_6_months: number;
-  contributors: number;
-  contributors_6_months: number;
+  closed_issue_count_6_months: number;
+  commit_count_6_months: number;
+  contributor_count: number;
+  contributor_count_6_months: number;
+  display_name: string;
+  event_source: string;
   first_commit_date: Date;
-  forks: number;
-  issues_closed_6_months: number;
-  issues_opened_6_months: number;
+  fork_count: number;
+  fulltime_developer_average_6_months: number;
   last_commit_date: Date;
-  new_contributors_6_months: number;
+  merged_pull_request_count_6_months: number;
+  new_contributor_count_6_months: number;
+  opened_issue_count_6_months: number;
+  opened_pull_request_count_6_months: number;
   project_id: string;
   project_name: string;
-  project_slug: string;
-  pull_requests_merged_6_months: number;
-  pull_requests_opened_6_months: number;
-  repositories: number;
-  repository_source: string;
-  stars: number;
-  }
+  project_namespace: string;
+  project_source: string;
+  repository_count: number;
+  star_count: number;
+}
   
-  export interface OnchainMetrics {
-  active_users: number;
-  first_txn_date: Date;
-  high_frequency_users: number;
-  l2_gas_6_months: number;
-  less_active_users: number;
-  more_active_users: number;
-  multi_project_users: number;
-  network: string;
-  new_user_count: number;
-  num_contracts: number;
+export interface OnchainMetricsData {
+  active_contract_count_90_days: number;
+  address_count: number;
+  address_count_90_days: number;
+  days_since_first_transaction: number;
+  display_name: string;
+  event_source: string;
+  gas_fees_sum: number;
+  gas_fees_sum_6_months: number;
+  high_activity_address_count_90_days: number;
+  low_activity_address_count_90_days: number;
+  medium_activity_address_count_90_days: number;
+  multi_project_address_count_90_days: number;
+  new_address_count_90_days: number;
   project_id: string;
   project_name: string;
-  project_slug: string;
-  total_l2_gas: number;
-  total_txns: number;
-  total_users: number;
-  txns_6_months: number;
-  users_6_months: number;
-  }
+  project_namespace: string;
+  project_source: string;
+  returning_address_count_90_days: number;
+  transaction_count: number;
+  transaction_count_6_months: number;
+}
