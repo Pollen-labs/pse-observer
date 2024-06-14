@@ -44,8 +44,11 @@ export default async function Home() {
       console.error('GraphQL errors:', jsonResponse.errors);
       return;
     }
-    const data = jsonResponse.data
-    const projects = data.projects_by_collection_v1
+    const data = jsonResponse.data;
+
+    const projects = data.projects_by_collection_v1;
+    projects.push({"project_name": "voicedeck"} as Project);
+    
     // const codeMetrics: CodeMetricsData = data.code_metrics_by_collection[0]
     // const onchainMetrics: OnchainMetrics[] = data.onchain_metrics_by_collection
 
