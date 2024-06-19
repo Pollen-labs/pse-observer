@@ -1,6 +1,7 @@
 import { CodeMetricsData } from "@/types";
 
 export const CodeMetrics: React.FC<CodeMetricsData> = ({
+  active_developer_count_6_months,
   closed_issue_count_6_months,
   commit_count_6_months,
   contributor_count,
@@ -31,6 +32,7 @@ export const CodeMetrics: React.FC<CodeMetricsData> = ({
         <p className="pl-5">- stars:  {star_count}</p>
       <li>Contributors:</li>
         <p className="pl-5">- total:  {contributor_count}</p>
+        <p className="pl-5">- active developer 6 months:  {active_developer_count_6_months}</p>
         <p className="pl-5">- last 6 months:  {contributor_count_6_months}</p>
         <p className="pl-5">- new in last 6 months:  {new_contributor_count_6_months}</p>
         <p className="pl-5">- avg. full-time devs last 6 months:  {Math.floor(fulltime_developer_average_6_months)}</p>

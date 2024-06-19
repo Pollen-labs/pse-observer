@@ -22,6 +22,7 @@ export default async function ProjectDetails({ params }: ProjectDetailsProps ) {
         query: `
           query getProjectDetails($projectName: String!) {
             code_metrics_by_project_v1(where: {project_name: {_eq: $projectName}}) { 
+              active_developer_count_6_months
               closed_issue_count_6_months
               commit_count_6_months
               contributor_count
