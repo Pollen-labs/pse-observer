@@ -1,4 +1,5 @@
 export interface CodeMetricsData {
+  active_developer_count_6_months: number;
   closed_issue_count_6_months: number;
   commit_count_6_months: number;
   contributor_count: number;
