@@ -59,6 +59,7 @@ export default async function Home() {
       {project_name: "zkemail"},
       {project_name: "zkp2p"},
       {project_name: "zk-passport"},
+      {project_name: "plume-sig"},
       {project_name: "voicedeck"},
     ];
 
