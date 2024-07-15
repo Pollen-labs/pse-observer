@@ -77,7 +77,6 @@ export default async function Home() {
 
       // PSE inactive projects
       {project_name: "unirep"},
-      {project_name: "blockchain-powered-esim"},
       {project_name: "rate-limiting-nullifier"},
       {project_name: "zk-eigentrust-privacy-scaling-explorations"},
       {project_name: "zkopru-network"},

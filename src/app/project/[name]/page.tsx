@@ -4,90 +4,46 @@ import { CodeMetricsData, OnchainMetricsData } from "@/types";
 import CodeMetrics from "@/components/CodeMetrics";
 import NetworkList from "@/components/NetworkList";
 
+import { BigQuery }  from '@google-cloud/bigquery';
+
 interface ProjectDetailsProps {
   params: { name: string };
+}
+
+async function query(projectName: string) {
+
+  const query = `select *
+  from \`oso_production.code_metrics_by_project_v1\`
+  where project_name = '${projectName}'
+  `;
+
+
+
+const bigquery = new BigQuery();
+
+  const options = {
+    query: query,
+  };
+
+  // Run the query as a job
+  const [job] = await bigquery.createQueryJob(options);
+  console.log(`Job ${job.id} started.`);
+
+  // Wait for the query to finish
+  const [rows] = await job.getQueryResults();
+
+  return rows[0];
 }
 
 export default async function ProjectDetails({ params }: ProjectDetailsProps ) {
   const { name } = params;
   try {
-    const response = await fetch('https://opensource-observer.hasura.app/v1/graphql', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${process.env.OSO_API_KEY}`,
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-      },
-      body: JSON.stringify({
-        query: `
-          query getProjectDetails($projectName: String!) {
-            code_metrics_by_project_v1(where: {project_name: {_eq: $projectName}}) { 
-              active_developer_count_6_months
-              closed_issue_count_6_months
-              commit_count_6_months
-              contributor_count
-              contributor_count_6_months
-              display_name
-              event_source
-              first_commit_date
-              fork_count
-              fulltime_developer_average_6_months
-              last_commit_date
-              merged_pull_request_count_6_months
-              new_contributor_count_6_months
-              opened_issue_count_6_months
-              opened_pull_request_count_6_months
-              project_id
-              project_name
-              project_namespace
-              project_source
-              repository_count
-              star_count
-            }
-            onchain_metrics_by_project_v1(where: {project_name: {_eq: $projectName}}) {
-              active_contract_count_90_days
-              address_count
-              address_count_90_days
-              days_since_first_transaction
-              display_name
-              event_source
-              gas_fees_sum
-              gas_fees_sum_6_months
-              high_activity_address_count_90_days
-              low_activity_address_count_90_days
-              medium_activity_address_count_90_days
-              multi_project_address_count_90_days
-              new_address_count_90_days
-              project_id
-              project_name
-              project_namespace
-              project_source
-              returning_address_count_90_days
-              transaction_count
-              transaction_count_6_months
-            }
-          }
-        `,
-        variables: {
-          projectName: name
-        }
-      })
-    });
+    const response = await query(name);
+    console.log("res: " + JSON.stringify(response));
 
-    if (!response.ok) {
-      console.error('HTTP error', response.status, await response.text());
-      return;
-    }
 
-    const jsonResponse = await response.json();
-    if (jsonResponse.errors) {
-      console.error('GraphQL errors:', jsonResponse.errors);
-      return;
-    }
-
-    const data = jsonResponse.data
-    const codeMetrics: CodeMetricsData = data.code_metrics_by_project_v1[0]
-    const onchainMetrics: OnchainMetricsData[] = data.onchain_metrics_by_project_v1
+    const codeMetrics: CodeMetricsData = response as CodeMetricsData;
+    // const onchainMetrics: OnchainMetricsData[] = {} as OnchainMetricsData[];
 
     return (
       <main className="p-10">
@@ -105,7 +61,7 @@ export default async function ProjectDetails({ params }: ProjectDetailsProps ) {
           </div>
           <div className="flex-col items-center justify-center">
             <h2 className="text-2xl underline pb-8">ON-CHAIN METRICS</h2>
-            <NetworkList onchainMetrics={onchainMetrics}/>
+            {/* <NetworkList onchainMetrics={onchainMetrics}/> */}
           </div>
         </section>
       </main>

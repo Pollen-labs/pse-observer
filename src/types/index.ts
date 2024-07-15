@@ -6,10 +6,10 @@ export interface CodeMetricsData {
   contributor_count_6_months: number;
   display_name: string;
   event_source: string;
-  first_commit_date: Date;
+  first_commit_date: any;
   fork_count: number;
   fulltime_developer_average_6_months: number;
-  last_commit_date: Date;
+  last_commit_date: any;
   merged_pull_request_count_6_months: number;
   new_contributor_count_6_months: number;
   opened_issue_count_6_months: number;
