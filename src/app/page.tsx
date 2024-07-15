@@ -48,19 +48,39 @@ export default async function Home() {
 
     const projects: Project[] = [
       {project_name: "privacy-scaling-explorations"},
+      // PSE active projects
       {project_name: "anon-aadhaar"},
       {project_name: "anonklub"},
       {project_name: "bandada-infra"},
-      {project_name: "getwax"},
+      {project_name: "cursive-team"},
+      {project_name: "halo2-privacy-scaling-explorations"},
+      {project_name: "maci-privacy-scaling-explorations"},
+      {project_name: "zkmopro"},
+      {project_name: "sonobe-privacy-scaling-explorations"},
+      {project_name: "mpz-privacy-scaling-explorations"},
+      {project_name: "greco-privacy-scaling-explorations"},
+      {project_name: "semaphore-protocol"},
       {project_name: "summa-dev"},
       {project_name: "tlsnotary"},
-      {project_name: "zkmopro"},
-      {project_name: "semaphore-protocol"},
+      {project_name: "pse-trusted-setup-suite"},
+      {project_name: "getwax"},
       {project_name: "zkemail"},
+      {project_name: "zk-kit-privacy-scaling-explorations"},
+      {project_name: "zkstats"},
+      {project_name: "zkevm-privacy-scaling-explorations"},
+
+      // PSE grantee projects
+      {project_name: "blockchain-powered-esim"},
       {project_name: "zkp2p"},
       {project_name: "zk-passport"},
       {project_name: "plume-sig"},
-      {project_name: "voicedeck"},
+
+      // PSE inactive projects
+      {project_name: "unirep"},
+      {project_name: "blockchain-powered-esim"},
+      {project_name: "rate-limiting-nullifier"},
+      {project_name: "zk-eigentrust-privacy-scaling-explorations"},
+      {project_name: "zkopru-network"},
     ];
 
     
