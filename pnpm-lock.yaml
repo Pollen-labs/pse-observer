@@ -11,6 +11,9 @@ dependencies:
   '@vercel/functions':
     specifier: ^1.4.0
     version: 1.4.0
+  export-to-csv:
+    specifier: ^1.3.0
+    version: 1.3.0
   google-auth-library:
     specifier: ^9.11.0
     version: 9.11.0
@@ -2434,6 +2437,11 @@ packages:
     dependencies:
       md5.js: 1.3.5
       safe-buffer: 5.2.1
+    dev: false
+
+  /export-to-csv@1.3.0:
+    resolution: {integrity: sha512-msPjbfozZdYzDghAEKmCVH5veMeKHNacplE6noXvGiA8AeV1qa/SOxp6JXDjF9R8Kf6v3ypI6jskiY19dkhZeA==}
+    engines: {node: ^v12.20.0 || >=v14.13.0}
     dev: false
 
   /extend@3.0.2:

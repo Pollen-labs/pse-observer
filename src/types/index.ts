@@ -44,3 +44,9 @@ export interface OnchainMetricsData {
   transaction_count: number;
   transaction_count_6_months: number;
 }
+
+
+export interface Project {
+  project_id?: string;
+  project_name: string;
+}
