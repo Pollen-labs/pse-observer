@@ -10,6 +10,8 @@
   },
   "dependencies": {
     "@google-cloud/bigquery": "^7.8.0",
+    "@vercel/functions": "^1.4.0",
+    "google-auth-library": "^9.11.0",
     "lucide-react": "^0.378.0",
     "next": "14.2.3",
     "oss-directory": "^0.0.12",

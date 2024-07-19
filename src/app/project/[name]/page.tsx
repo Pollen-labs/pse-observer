@@ -4,6 +4,8 @@ import { CodeMetricsData, OnchainMetricsData } from "@/types";
 import CodeMetrics from "@/components/CodeMetrics";
 import NetworkList from "@/components/NetworkList";
 
+import { getVercelOidcToken } from '@vercel/functions/oidc';
+import { BaseExternalAccountClient, ExternalAccountClient } from 'google-auth-library';
 import { BigQuery }  from '@google-cloud/bigquery';
 
 interface ProjectDetailsProps {
@@ -17,9 +19,7 @@ async function query(projectName: string) {
   where project_name = '${projectName}'
   `;
 
-
-
-const bigquery = new BigQuery();
+  const bigquery = createBigQueryClient();
 
   const options = {
     query: query,
@@ -70,4 +70,38 @@ export default async function ProjectDetails({ params }: ProjectDetailsProps ) {
   } catch (error) {
     console.error('Fetch error:', error)
   }
+}
+
+
+function createBigQueryClient() {
+  let bigquery = new BigQuery();
+
+  // Use Workload Identity Federation in Vercel environment
+  if (process.env.VERCEL === "1") {
+    const GCP_PROJECT_ID = process.env.GCP_PROJECT_ID;
+    const GCP_PROJECT_NUMBER = process.env.GCP_PROJECT_NUMBER;
+    const GCP_SERVICE_ACCOUNT_EMAIL = process.env.GCP_SERVICE_ACCOUNT_EMAIL;
+    const GCP_WORKLOAD_IDENTITY_POOL_ID = process.env.GCP_WORKLOAD_IDENTITY_POOL_ID;
+    const GCP_WORKLOAD_IDENTITY_POOL_PROVIDER_ID = process.env.GCP_WORKLOAD_IDENTITY_POOL_PROVIDER_ID;
+      
+    // Initialize the External Account Client
+    const authClient = ExternalAccountClient.fromJSON({
+      type: 'external_account',
+      audience: `//iam.googleapis.com/projects/${GCP_PROJECT_NUMBER}/locations/global/workloadIdentityPools/${GCP_WORKLOAD_IDENTITY_POOL_ID}/providers/${GCP_WORKLOAD_IDENTITY_POOL_PROVIDER_ID}`,
+      subject_token_type: 'urn:ietf:params:oauth:token-type:jwt',
+      token_url: 'https://sts.googleapis.com/v1/token',
+      service_account_impersonation_url: `https://iamcredentials.googleapis.com/v1/projects/-/serviceAccounts/${GCP_SERVICE_ACCOUNT_EMAIL}:generateAccessToken`,
+      subject_token_supplier: {
+        // Use the Vercel OIDC token as the subject token
+        getSubjectToken: getVercelOidcToken,
+      },
+    });
+
+    bigquery = new BigQuery({ 
+      authClient: authClient as BaseExternalAccountClient, 
+      projectId: GCP_PROJECT_ID
+    });
+  }
+
+  return bigquery;
 }
