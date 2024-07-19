@@ -12,40 +12,6 @@ interface Project {
 
 export default async function Home() {
   try {
-//     const response = await fetch('https://opensource-observer.hasura.app/v1/graphql', {
-//       method: 'POST',
-//       headers: {
-//         Authorization: `Bearer ${process.env.OSO_API_KEY}`,
-//         'Content-Type': 'application/json',
-//         'Accept': 'application/json',
-//       },
-//       body: JSON.stringify({
-//         query: `
-//           query getCollectionDetails($collectionName: String!) {
-//             projects_by_collection_v1(where: {collection_name: {_eq: $collectionName}}) {
-//               project_name
-//               project_id
-//             }
-//           }
-//         `,
-//         variables: {
-//           collectionName: collection
-//         }
-//       })
-//     });
-
-//     if (!response.ok) {
-//       console.error('HTTP error', response.status, await response.text());
-//       return;
-//     }
-
-//     const jsonResponse = await response.json();
-//     if (jsonResponse.errors) {
-//       console.error('GraphQL errors:', jsonResponse.errors);
-//       return;
-//     }
-//     const data = jsonResponse.data;
-
     const projects: Project[] = [
       {project_name: "privacy-scaling-explorations"},
       // PSE active projects
