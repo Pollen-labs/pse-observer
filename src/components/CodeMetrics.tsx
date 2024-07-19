@@ -1,6 +1,7 @@
 import { CodeMetricsData } from "@/types";
 
 export const CodeMetrics: React.FC<CodeMetricsData> = ({
+  active_developer_count_6_months,
   closed_issue_count_6_months,
   commit_count_6_months,
   contributor_count,
@@ -31,12 +32,13 @@ export const CodeMetrics: React.FC<CodeMetricsData> = ({
         <p className="pl-5">- stars:  {star_count}</p>
       <li>Contributors:</li>
         <p className="pl-5">- total:  {contributor_count}</p>
+        <p className="pl-5">- active developer 6 months:  {active_developer_count_6_months}</p>
         <p className="pl-5">- last 6 months:  {contributor_count_6_months}</p>
         <p className="pl-5">- new in last 6 months:  {new_contributor_count_6_months}</p>
         <p className="pl-5">- avg. full-time devs last 6 months:  {Math.floor(fulltime_developer_average_6_months)}</p>
       <li>Activiy:</li>
-        <p className="pl-5">- first commit:  {new Date(first_commit_date).toISOString().split('T')[0]}</p>
-        <p className="pl-5">- last commit:  {new Date(last_commit_date).toISOString().split('T')[0]}</p>
+        <p className="pl-5">- first commit:  {new Date(first_commit_date?.value || null).toISOString().split('T')[0]}</p>
+        <p className="pl-5">- last commit:  {new Date(last_commit_date?.value || null).toISOString().split('T')[0]}</p>
         <p className="pl-5">- commits in last 6 months:  {commit_count_6_months}</p>
         <p className="pl-5">- issues opened in last 6 months:  {opened_issue_count_6_months}</p>
         <p className="pl-5">- issues closed in last 6 months:  {closed_issue_count_6_months}</p>
