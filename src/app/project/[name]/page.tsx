@@ -1,25 +1,26 @@
+import { getBigQueryClient } from "@/utils/bigquery";
+
 import Link from "next/link";
 import { ArrowLeft } from 'lucide-react';
 import { CodeMetricsData, OnchainMetricsData } from "@/types";
 import CodeMetrics from "@/components/CodeMetrics";
 import NetworkList from "@/components/NetworkList";
 
-import { getVercelOidcToken } from '@vercel/functions/oidc';
-import { BaseExternalAccountClient, ExternalAccountClient } from 'google-auth-library';
-import { BigQuery }  from '@google-cloud/bigquery';
 
 interface ProjectDetailsProps {
   params: { name: string };
 }
 
-async function query(projectName: string) {
+const bigquery = getBigQueryClient();
+
+async function getInitialCodeMetrics(projectName: string) {
 
   const query = `select *
   from \`oso_production.code_metrics_by_project_v1\`
   where project_name = '${projectName}'
   `;
 
-  const bigquery = createBigQueryClient();
+  
 
   const options = {
     query: query,
@@ -27,22 +28,60 @@ async function query(projectName: string) {
 
   // Run the query as a job
   const [job] = await bigquery.createQueryJob(options);
-  console.log(`Job ${job.id} started.`);
 
   // Wait for the query to finish
   const [rows] = await job.getQueryResults();
 
-  return rows[0];
+  return rows[0] as CodeMetricsData;
+}
+
+// OSO Data has some incorrect data..
+// so we manually aggregate star and fork metrics to prevent wrong data
+//  related GitHub issue: https://github.com/opensource-observer/oso/issues/1781
+async function preventWrongMetrics(projectName: string, metrics: CodeMetricsData) {
+  const query = `SELECT DISTINCT *
+  FROM \`oso_production.int_repo_metrics_by_project\`
+  WHERE project_id = (
+    SELECT project_id
+    FROM \`oso_production.projects_v1\`
+    WHERE project_name = '${projectName}'
+    LIMIT 1
+  );
+  `;
+
+  const options = {
+    query: query,
+  };
+
+  // Run the query as a job
+  const [job] = await bigquery.createQueryJob(options);
+
+  // Wait for the query to finish
+  const [rows] = await job.getQueryResults();
+
+  // reset values
+  metrics.star_count = 0;
+  metrics.fork_count = 0;
+
+  // re-calculate values
+  rows.forEach((row) => {
+    metrics.star_count += row.star_count;
+    metrics.fork_count += row.fork_count;
+  })
+
+  return metrics;
 }
 
 export default async function ProjectDetails({ params }: ProjectDetailsProps ) {
   const { name } = params;
   try {
-    const response = await query(name);
-    console.log("res: " + JSON.stringify(response));
+
+    const initialCodeMetrics = await getInitialCodeMetrics(name);
 
 
-    const codeMetrics: CodeMetricsData = response as CodeMetricsData;
+    const codeMetrics = await preventWrongMetrics(name, initialCodeMetrics);
+
+
     // const onchainMetrics: OnchainMetricsData[] = {} as OnchainMetricsData[];
 
     return (
@@ -70,38 +109,4 @@ export default async function ProjectDetails({ params }: ProjectDetailsProps ) {
   } catch (error) {
     console.error('Fetch error:', error)
   }
-}
-
-
-function createBigQueryClient() {
-  let bigquery = new BigQuery();
-
-  // Use Workload Identity Federation in Vercel environment
-  if (process.env.VERCEL === "1") {
-    const GCP_PROJECT_ID = process.env.GCP_PROJECT_ID;
-    const GCP_PROJECT_NUMBER = process.env.GCP_PROJECT_NUMBER;
-    const GCP_SERVICE_ACCOUNT_EMAIL = process.env.GCP_SERVICE_ACCOUNT_EMAIL;
-    const GCP_WORKLOAD_IDENTITY_POOL_ID = process.env.GCP_WORKLOAD_IDENTITY_POOL_ID;
-    const GCP_WORKLOAD_IDENTITY_POOL_PROVIDER_ID = process.env.GCP_WORKLOAD_IDENTITY_POOL_PROVIDER_ID;
-      
-    // Initialize the External Account Client
-    const authClient = ExternalAccountClient.fromJSON({
-      type: 'external_account',
-      audience: `//iam.googleapis.com/projects/${GCP_PROJECT_NUMBER}/locations/global/workloadIdentityPools/${GCP_WORKLOAD_IDENTITY_POOL_ID}/providers/${GCP_WORKLOAD_IDENTITY_POOL_PROVIDER_ID}`,
-      subject_token_type: 'urn:ietf:params:oauth:token-type:jwt',
-      token_url: 'https://sts.googleapis.com/v1/token',
-      service_account_impersonation_url: `https://iamcredentials.googleapis.com/v1/projects/-/serviceAccounts/${GCP_SERVICE_ACCOUNT_EMAIL}:generateAccessToken`,
-      subject_token_supplier: {
-        // Use the Vercel OIDC token as the subject token
-        getSubjectToken: getVercelOidcToken,
-      },
-    });
-
-    bigquery = new BigQuery({ 
-      authClient: authClient as BaseExternalAccountClient, 
-      projectId: GCP_PROJECT_ID
-    });
-  }
-
-  return bigquery;
 }
